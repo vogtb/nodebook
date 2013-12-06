@@ -16,44 +16,67 @@ function(services) {
       };
       $http.post('/api/' + GlobalService.getCookie('uid') +'/graphs', graph)
         .success(function(data, status, headers, config) {
+          $rootScope.graphs.push(data);
           $rootScope.notify('Graph created in database', 4000);
-          callback(data);
         })
         .error(function(data, status, headers, config) {
-          console.log(data);
+          rootScope.notify('Sorry, something went wrong :(', 4000);
         });
       
     };
 
     //Loads a specific graph by id
-    this.load = function(graph_id, callback) {
+    this.load = function(graph_id) {
       $http.get('/api/' + GlobalService.getCookie('uid') +'/graphs/' + graph_id)
         .success(function(data, status, headers, config) {
           var collection = {
             nodes: data,
             connections: GlobalService.connectionEngine(data)
           };
-          callback(collection);
+          angular.forEach($rootScope.graphs, function(value, key) {
+            if (value._id == graph_id) {
+              $rootScope.currentGraph = value;
+            }
+          });
+          $rootScope.connections = collection.connections;
+          $rootScope.nodes = collection.nodes;
+          $rootScope.maxWeight = 0;
+          $rootScope.focusedNode = null;
+          $rootScope.$broadcast('loaded');
         })
         .error(function(data, status, headers, config) {
-          callback([]);
           $rootScope.notify('Sorry, something went wrong :(', 4000);
         });
     }
     
     //Loads the primary graph, which is just all of the nodes.
-    this.loadPrimary = function(callback) {
+    this.loadPrimary = function() {
       $http.get('/api/' + GlobalService.getCookie('uid') +'/nodes')
         .success(function(data, status, headers, config) {
           var collection = {
             nodes: data,
             connections: GlobalService.connectionEngine(data)
           };
-          callback(collection);
+          if (collection.nodes.length == 0) {
+            $rootScope.fresh = true;
+            setTimeout(function() {
+              $('#closeModal').trigger('click');
+              $('#welcome').trigger('click');
+            }, 1);
+          } else {
+            $rootScope.fresh = false;
+            $rootScope.currentGraph = null;
+            $rootScope.connections = collection.connections;
+            $rootScope.nodes = collection.nodes;
+            $rootScope.maxWeight = 0;
+            $rootScope.focusedNode = null;
+            $rootScope.secondFocusedNode = null;
+            $rootScope.$broadcast('loaded');
+            $rootScope.$broadcast('refreshCanvas');
+          }
         })
         .error(function(data, status, headers, config) {
           $rootScope.notify('Sorry, something went wrong :(', 4000);
-          callback([]);
         });
     }
 

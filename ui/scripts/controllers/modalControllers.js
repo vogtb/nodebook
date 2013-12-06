@@ -22,23 +22,8 @@ function AddNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, NodeServi
     dialog.close();
   };
   $scope.addNode = function(){
-    NodeService.add($scope.new_text, function(data) {
-      var newNodeList = [];
-      newNodeList.push(data);
-      angular.forEach($rootScope.nodes, function(value, key) {
-        newNodeList.push(value);
-      });
-      $rootScope.nodes = newNodeList;
-      if ($rootScope.nodes.length > 2) {
-        $rootScope.focusedNode = $rootScope.nodes[0];
-      } else {
-        //@TODO: Eliminate this. We need it now because of an error in the refreshing of the canvas.
-        window.location = "/nb";
-      }
-      $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
-      $rootScope.$broadcast('reloadSys');
-      $scope.close();
-    });
+    NodeService.add($scope.new_text);
+    $scope.close();
   };
 }
 
@@ -109,11 +94,8 @@ function CreateGraphModalInstanceControl($scope, $dialog, dialog, $rootScope, No
 
   $scope.createGraph = function() {
     $rootScope.log($scope.newGraphName);
-    GraphService.create($scope.newGraphName, $scope.selectedColor.name, $scope.keywords, function(data) {
-      $rootScope.graphs.push(data);
-      dialog.close();
-      $rootScope.notify('Graph created.', 4000);
-    });
+    GraphService.create($scope.newGraphName, $scope.selectedColor.name, $scope.keywords);
+    $scope.close();
   };
 }
 

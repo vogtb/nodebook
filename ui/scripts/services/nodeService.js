@@ -4,7 +4,7 @@ function(services) {
   services.service('NodeService', function(GlobalService, $http, $rootScope) {
     
     //When given text, this will add a single node.
-    this.add = function(text, callback) {
+    this.add = function(text) {
       var node = {
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
         text: text
@@ -12,7 +12,20 @@ function(services) {
       $http.post('/api/' + GlobalService.getCookie('uid') +'/nodes', node)
         .success(function(data, status, headers, config) {
           $rootScope.notify('Node added to database', 4000);
-          callback(data);
+          var newNodeList = [];
+          newNodeList.push(data);
+          angular.forEach($rootScope.nodes, function(value, key) {
+            newNodeList.push(value);
+          });
+          $rootScope.nodes = newNodeList;
+          if ($rootScope.nodes.length > 2) {
+            $rootScope.focusedNode = $rootScope.nodes[0];
+          } else {
+            //@TODO: Eliminate this. We need it now because of an error in the refreshing of the canvas.
+            window.location = "/nb";
+          }
+          $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
+          $rootScope.$broadcast('reloadSys');
         })
         .error(function(data, status, headers, config) {
           $rootScope.notify('Sorry, something went wrong :(', 4000);
@@ -70,7 +83,21 @@ function(services) {
             nodes: data,
             connections: GlobalService.connectionEngine(data)
           };
-          callback(collection);
+          if (collection.nodes.length > 0) {
+            $rootScope.currentGraph = null;
+            $rootScope.connections = collection.connections;
+            $rootScope.nodes = collection.nodes;
+            $rootScope.maxWeight = 0;
+            $rootScope.focusedNode = null;
+            $rootScope.queryResult = {
+              show: true,
+              query: $rootScope.query
+            };
+            $rootScope.$broadcast('loaded');
+            $rootScope.$broadcast('refreshCanvas');
+          } else {
+            $rootScope.notify('No Data Available', 4000);
+          }
         })
         .error(function(data, status, headers, config) {
           $rootScope.notify('Sorry, something went wrong :(', 4000);

@@ -103,25 +103,11 @@ define(['controllers/controllers', 'services/nodeService'],
         }
         //Loads and displays a graph.
         $rootScope.loadGraphNodes = function(graph) {
-          GraphService.load(graph._id, function(data) {
-            $rootScope.currentGraph = graph;
-            $rootScope.connections = data.connections;
-            $rootScope.nodes = data.nodes;
-            $rootScope.maxWeight = 0;
-            $rootScope.focusedNode = null;
-            $rootScope.$broadcast('loaded');
-          });
+          GraphService.load(graph._id);
         }
         
         $rootScope.loadPrimary = function() {
-          GraphService.loadPrimary(function(data) {
-            $rootScope.currentGraph = null;
-            $rootScope.connections = data.connections;
-            $rootScope.nodes = data.nodes;
-            $rootScope.maxWeight = 0;
-            $rootScope.focusedNode = null;
-            $rootScope.$broadcast('loaded');
-          });
+          GraphService.loadPrimary();
         }
         
         $rootScope.focusNode = function(node) {
@@ -147,23 +133,7 @@ define(['controllers/controllers', 'services/nodeService'],
         }
         
         $rootScope.queryNodes = function() {
-          NodeService.query($scope.query, function(data) {
-            if (data.nodes.length > 0) {
-              $rootScope.currentGraph = null;
-              $rootScope.connections = data.connections;
-              $rootScope.nodes = data.nodes;
-              $rootScope.maxWeight = 0;
-              $rootScope.focusedNode = null;
-              $rootScope.queryResult = {
-                show: true,
-                query: $rootScope.query
-              };
-              $rootScope.$broadcast('loaded');
-              $rootScope.$broadcast('refreshCanvas');
-            } else {
-              $rootScope.notify('No Data Available', 4000);
-            }
-          });
+          NodeService.query($scope.query);
         }
         
         $rootScope.JackLondon = function() {
@@ -187,37 +157,19 @@ define(['controllers/controllers', 'services/nodeService'],
         });
         
         //Loading the main graph's nodes, which is all nodes
-        GraphService.loadPrimary(function(data) {
-          if (data.nodes.length == 0) {
-            $rootScope.fresh = true;
-            setTimeout(function() {
-              $('#closeModal').trigger('click');
-              $('#welcome').trigger('click');
-            }, 1);
-          } else {
-            $rootScope.fresh = false;
-            $rootScope.currentGraph = null;
-            $rootScope.connections = data.connections;
-            $rootScope.nodes = data.nodes;
-            $rootScope.maxWeight = 0;
-            $rootScope.focusedNode = null;
-            $rootScope.secondFocusedNode = null;
-            $rootScope.$broadcast('loaded');
-            $rootScope.$broadcast('refreshCanvas');
-          }
-        });
+        GraphService.loadPrimary();
 
         GlobalService.getUserData($rootScope.uid, function(data) {
           $rootScope.user = data;
         });
         
+        //Binding shift key for node comparison
         $(document).bind('keydown', function(e) {
           var code = e.keyCode || e.which;
            if(code == 16) {
              $rootScope.shift = true;
            }
         });
-        
         $(document).bind('keyup', function(e) {
           var code = e.keyCode || e.which;
            if(code == 16) {
