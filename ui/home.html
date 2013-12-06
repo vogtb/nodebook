@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+<head>
+  <title>NodeBook</title>
+  <meta charset="utf-8" />
+  <meta name="title" content="NodeBook">
+  <meta name="author" content="Ben Vogt">
+  <meta name="subject" content="Web Application">
+  <meta property="og:title" content="Ben Vogt">
+  <meta property="og:type" content="web application">
+  <meta property="og:url" content="null">
+  <meta property="og:image" content="img/og_icon.png"/>
+  <meta property="og:site_name" content="NodeBook">
+  <meta property="og:description" content="Nodebook is a visually intuitive way to make sense of your ideas.">
+
+  <link href="styles/bootstrap.css" rel="stylesheet" media="screen">
+  <link href="styles/home.css" rel="stylesheet" media="screen">
+
+</head>
+<body>
+  <div class="header">
+    <div class="container">
+      <div class="nav-bar">
+        <div class="logo pull-left"><a href="../"><img src="img/nodebook.png" /></a></div>
+        <div class="signs pull-right">
+          <a href="/signin" class="btn btn-primary">
+            Sign Up
+          </a>
+          <a href="/signin" class="btn">
+            Sign In
+          </a>
+        </div>
+      </div>
+      <div class="banner">
+        <div class="pitch">
+          <div class="welcome">
+            Collect your thoughts.
+          </div>
+          <div class="tagline">
+            Nodebook is a visually intuitive way <br/> to organize of your ideas.
+          </div>
+          <div class="dosomething">
+            <a href="/signin" class="btn btn-large btn-primary">
+              Start your Graph &raquo;
+            </a>
+          </div>
+        </div>
+        <div class="canvas">
+          <canvas width="440" height="440" id="viewport">It looks like you're using an outdated browser. Please download a new one.</canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="scripts/vendor/jquery.js"></script>
+  <script src="scripts/vendor/arbor.js"></script>
+  <script src="scripts/vendor/bootstrap.js"></script>
+  <script src="scripts/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+/*
+UI styles
+*/
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none;
+}
+
+
+h1, h2, h3, h4, h5 {
+  font-weight: 300;
+}
+
+
+#content {
+	min-width: 1100px;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	overflow: hidden;
+	background: #ffffff;
+}
+
+.badge {
+  border: 1px solid #ffffff;
+}
+
+.navigation {
+	width: 100%;
+	height: 64px;
+	background: #f5f5f5;
+  z-index: 888;
+  border-bottom: 1px solid #d9d9d9;
+  font-size: 13px;
+}
+
+.navigation .inner {
+  position: relative;
+  top: 13px;
+}
+
+.navigation li {
+  font-size: 14px;
+}
+
+.navigation .account {
+  margin-right: 10px;
+  margin-top: 1px;
+}
+
+.logo {
+	margin-left: 14px;
+  width: 132px;
+  float: left;
+  display: inline;
+  margin-top: 6px;
+}
+
+.navigation input {
+  height: 16px;
+  margin-top: 0px;
+}
+
+.current-graph {
+  position: relative;
+  top: 2px;
+}
+
+.current-graph .title {
+  position: relative;
+  top: 2px;
+  font-size: 16px;
+}
+
+.navigation .in-nav {
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+.graph-drop {
+  margin-left: 20px;
+}
+
+.view-title {
+  position: absolute;
+  margin-top: 9px;
+  margin-left: 12px;
+}
+
+#viewport {
+	background: #ffffff;
+	margin: 0;
+	padding: 0;
+	z-index: 800;
+  position: absolute;
+}
+
+.canvas-holder {
+  float: left;
+  display: inline;
+}
+
+.inspector {
+  float: left;
+  height: 100%;
+  background: #ffffff;
+  width: 300px;
+  position: absolute;
+  z-index: 999;
+  border-right: 1px solid #ececec;
+  left: 0px;
+}
+
+.inspector .close {
+  margin: 2px 10px 1px 1px;
+  z-index: 999;
+}
+
+.inspector .close-hold {
+  position: fixed;
+  height: 20px;
+  width: 322px;
+}
+
+.inspector .inner {
+  height: 100%;
+  overflow: scroll;
+  width: 320px;
+  background: #ffffff;
+}
+
+.inspector .inner .spacer {
+  height: 46px;
+}
+
+.node-view {
+  padding: 10px 10px;
+  border-bottom: 1px #CCCCCC dashed;
+}
+
+.selected {
+  background: #ECF4FC;
+}
+
+.node-view .date,
+.node-view ._id,
+.node-view .cat,
+.node-view .content {
+  font-size: 14px;
+  padding-bottom: 7px;
+}
+
+.node-view .actions {
+  padding-bottom: 7px;
+}
+
+.node-view .edit {
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.highlight {
+  background: #EFFBFF;
+}
+.add-node-area,
+.graph-keyword-area,
+.edit-node-area {
+  width: 516px;
+  height: 150px;
+  resize: none;
+}
+
+.add-graph-area {
+  width: 516px;
+  resize: none;
+}
+
+
+.slate {background:#333333;}
+.dino{background: #9747B7;}
+.purple{background: #C36FE6;}
+.sky {background: #349FE4;}
+.ocean {background: #2A87C6;}
+.red {background: #E74C3C;}
+.clay {background: #C0392B;}
+.pottery {background: #E25900;}
+.goldfish {background: #F28522;}
+.chedder {background: #FAA112;}
+.gameboy {background: #F7C90D;}
+.forest {background: #26AB2C;}
+.frog {background: #2FD876;}
+.kitchen {background:#19C4A4;}
+.turquoise {background:#16AC8F;}
+
+.color:hover {
+  border: 1px solid #333333;
+}
+
+.select-color {
+  padding-bottom:12px;
+}
+
+.select-color select {
+  float: left;
+  display: inline;
+}
+
+.select-color .selected {
+  float: left;
+  display: inline;
+  margin-left: 12px;
+  margin-top: 4px;
+}
+
+
+.notify {
+  display: none;
+  position: absolute;
+  top: 26px;
+  text-align: center;
+  width: 100%;
+  z-index: 1000;
+}
+
+.notify .inner {
+  z-index: 1000;
+  text-align: center;
+  background: #F9EDBE;
+  border: 1px solid #F0C36D;
+  z-index: 1000;
+  font-size: 14px;
+  padding: 5px 16px 5px 16px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal {
+  font-size: 14px;
+}
+
+.graph-block {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #EEEEEE;
+}
+
+
+.center {
+  text-align: center;
+}
+
+.welcome-header {
+  background-image: url('../img/blur.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  overflow: hidden;
+  border-radius: 3px 3px 0 0;
+}
+
+.diagram {
+  margin: 0 auto;
+  width: 360px;
+}

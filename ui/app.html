@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+<head>
+  <title>NodeBook</title>
+  <meta charset="utf-8" />
+  <meta name="title" content="NodeBook">
+  <meta name="author" content="Ben Vogt">
+  <meta name="subject" content="Web Application">
+  <meta property="og:title" content="Ben Vogt">
+  <meta property="og:type" content="web application">
+  <meta property="og:url" content="null">
+  <meta property="og:image" content="img/og_icon.png"/>
+  <meta property="og:site_name" content="NodeBook">
+  <meta property="og:description" content="Nodebook is a visually intuitive way to make sense of your ideas.">
+
+  <link href="styles/bootstrap.css" rel="stylesheet" media="screen">
+  <link href="styles/main.css" rel="stylesheet" media="screen">
+
+</head>
+<body ng-controller="RootControl" resize>
+  <div id="content">
+    <div class="navigation">
+      <div class="inner">
+        <div class="logo"><a href="#" ng-controller="AboutModalCtrl" ng-click="openDialog()"><img src="img/nodebook.png" /></a></div>
+        <form class="navbar-search search-node">
+          <input ng-model="query" type="text" class="search-query" placeholder="Search Nodebook" ng-enter="queryNodes()">
+        </form>
+        <div class="btn-group graph-drop in-nav">
+          <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">Graphs&nbsp;<span class="caret"></span></a>
+          <ul class="dropdown-menu pull-right">
+            <li>
+              <a tabindex="-1" href="#" ng-click="loadPrimary()">
+                Primary Graph &nbsp; <span class="badge slate">{{nodes.length}}</span>
+              </a>
+            </li>
+            <li class="divider"></li>
+            <li ng-repeat="graph in graphs">
+              <a tabindex="-1" href="#" ng-click="loadGraphNodes(graph)">
+                {{graph.name}} &nbsp;<span class="badge" ng-class="graph.color">{{graph.nodes.length | plus}}</span>
+              </a>
+            </li>
+            <li ng-show="noGraphs()" class="disabled">
+              <a tabindex="-1" href="#">
+                <span>No Graphs Created</span>
+              </a>
+            </li>
+            <li class="divider"ng-show="areNodesFocused"></li>
+            <li><a tabindex="-1" href="#" id="forceTrigger" ng-controller="DiffModalCtrl" ng-click="openDialog()" ng-show="areNodesFocused">Compare Nodes</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-submenu">
+              <a tabindex="-1" href="#">Demo Graphs</a>
+              <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="#" ng-click="JackLondon()" id="jack">Jack London</a></li>
+              </ul>
+            </li>
+            <li class="divider"></li>
+            <li><a tabindex="-1" href="#" ng-controller="OverviewModalCtrl" ng-click="openDialog()">Overview</a></li>
+            <li><a tabindex="-1" href="#" ng-controller="CreateGraphModalControl" ng-click="openDialog()">Create graph</a></li>
+          </ul>
+        </div>
+        <span class="current-graph" ng-show="currentGraph">
+          <span ng-cloak class="title"><strong>Graph: &nbsp;</strong>{{currentGraph.name}}</span>
+          <span ng-cloak class="badge {{currentGraph.color}}">{{currentGraph.nodes.length | plus}}</span>
+        </span>
+        <span class="current-graph" ng-show="queryResult.show">
+          <span ng-cloak class="title"><strong>Query: &nbsp;</strong>{{queryResult.query}}</span>
+          <span ng-cloak class="badge slate">{{nodes.length}}</span>
+        </span>
+        <ul class="nav nav-pills account pull-right" ng-cloak>
+          <li class="dropdown">
+            <a class="dropdown-toggle"data-toggle="dropdown"href="#">{{user.displayName}}&nbsp;<b class="caret"></b></a>
+            <ul class="dropdown-menu pull-right">
+              <li><a tabindex="-1" href="#" ng-controller="UserModalCtrl" ng-click="openDialog()">User Information</a></li>
+              <li><a tabindex="-1" href="#" ng-controller="WelcomeModalCtrl" ng-click="openDialog()" id="welcome">Quick Start Guide</a></li>
+              <li><a tabindex="-1" href="#" ng-controller="HelpModalCtrl" ng-click="openDialog()" id="help">Help Guide</a></li>
+              <li class="divider"></li>
+              <li><a tabindex="-1" href="#" ng-controller="AboutModalCtrl" ng-click="openDialog()">About Nodebook</a></li>
+              <li><a tabindex="-1" href="#" ng-controller="FeedbackCtrl" ng-click="openDialog()">Give Anonymous Feedback</a></li>
+              <li class="divider"></li>
+              <li><a tabindex="-1" href="/signout">Sign Out</a></li>
+            </ul>
+          </li>
+        </ul>
+        <div id="new" class="btn btn-small btn-primary pull-right in-nav" ng-controller="AddNodeModalCtrl" ng-click="openDialog()">New Node</div>
+      </div>
+    </div>
+    <div class="canvas-holder" ng-controller="GraphCtrl">
+      <canvas id="viewport"></canvas>
+    </div>
+    <div class="inspector" ng-controller="InspectorCtrl" ng-show="inspectorOn" ng-cloak>
+      <div class="inner">
+        <div class="node-view" id="{{node._id}}" ng-repeat="node in nodes" ng-class="{selected: node == focusedNode}" ng-click="focusFromText(node._id)">
+          <div class="_id" >{{node._id}}</div>
+          <div class="date">{{node.date | moment}}</div>
+          <div class="content" ng-cloak>
+            <span class="text" ng-cloak>{{node.text}}</span><a href="#" ng-controller="EditNodeModalCtrl" ng-click="openDialog(node)" class="edit">Edit Node</a>
+          </div>
+          <div class="actions">
+            <div class="btn-group">
+              <a class="btn btn-primary btn-mini dropdown-toggle" data-toggle="dropdown" href="#">Add to graph&nbsp;<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="graph in graphs">
+                  <a tabindex="-1" href="#" ng-click="addToGraph(graph._id, node._id)">
+                    {{graph.name}} &nbsp;<span class="badge" ng-class="graph.color">{{graph.nodes.length + ' +'}}</span>
+                  </a>
+                </li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" href="#" ng-controller="CreateGraphModalControl" ng-click="openDialog()">Create graph</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notify"><span class="inner"><i class="icon-ok"></i>&nbsp;{{notify_text}}<span></div>
+  <div ng-view></div>
+  <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+  <!-- GA tag -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-46110156-1', '144.89.178.165:3000');
+    ga('send', 'pageview');
+
+  </script>
+</body>
+</html>

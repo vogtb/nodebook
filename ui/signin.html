@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+<head>
+  <title>NodeBook - Sign In</title>
+  <meta charset="utf-8" />
+  <meta name="title" content="NodeBook">
+  <meta name="author" content="Ben Vogt">
+  <meta name="subject" content="Web Application">
+  <meta property="og:title" content="Ben Vogt">
+  <meta property="og:type" content="web application">
+  <meta property="og:url" content="null">
+  <meta property="og:image" content="img/og_icon.png"/>
+  <meta property="og:site_name" content="NodeBook">
+  <meta property="og:description" content="Nodebook is a visually intuitive way to make sense of your ideas.">
+
+  <link href="styles/bootstrap.css" rel="stylesheet" media="screen">
+  <link href="styles/home.css" rel="stylesheet" media="screen">
+
+</head>
+<body class="signin-body">
+  <div class="sign-in-header">
+    <div class="container">
+      <div class="logo pull-left"><a href="../"><img src="img/nodebook.png" /></a></div>
+      <span class="pull-right signs">
+        <a href="/signin" class="btn btn-primary">
+          Sign Up
+        </a>
+        <a href="/signin" class="btn">
+          Sign In
+        </a>
+      </span>
+    </div>
+  </div>
+  <div class="main">
+    <div class="container fill">
+      <div class="signin">
+        <div class="title block">Sign In</div>
+        <div class="block">
+          <p>By clicking "Sign in with your Google Account" you are agreeing to our <a href="/terms">Terms of Service and Privacy Policy</a>. You are also agreeing to share your email address and the name you've registered with Google, so we can authenticate your identity.</p>
+        </div>
+        <div class="block">
+          <a href="/auth/google" class="btn btn-large btn-primary">
+            Sign in with your Google Account
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

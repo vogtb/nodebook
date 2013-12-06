@@ -1,0 +1,127 @@
+/*
+Home Page styles
+*/
+
+.header {
+  width: 100%;
+  height: 590px;
+  /*background: #349FE4;*/
+  background-image: url('../img/blur.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+
+.nav-bar {
+  margin-top: 12px;
+  padding-bottom: 18px;
+  height: 58px;
+}
+
+.banner {
+  width: 1600px;
+}
+
+.banner .pitch {
+  width: 512px;
+  height: 512px;
+  float: left;
+  display: inline;
+}
+
+.banner .canvas {
+  position: relative;
+  top: 30px;
+  width: 512px;
+  height: 512px;
+  float: left;
+  display: inline;
+}
+
+.welcome {
+  font-size: 48px;
+  margin-top: 110px;
+  line-height: 1.5em;
+  font-weight: 300;
+}
+
+.tagline {
+  font-size: 28px;
+  padding-top: 64px;
+  line-height: 1.5em;
+  font-weight: 300;
+}
+
+.dosomething {
+  padding-top: 36px;
+}
+
+
+
+
+
+/*
+SIGN IN
+*/
+
+h1, h2, h3, h4, h5 {
+  font-weight: 300;
+}
+
+.sign-in-header {
+  width: 100%;
+  height: 68px;
+  background-image: url('../img/blur.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  overflow: hidden;
+}
+
+.main {
+  width: 100%;
+}
+
+.signin-body {
+  background: #F3F3F3;
+}
+
+.terms-body {
+  background: #FFFFFF;
+}
+
+.logo {
+  margin-top: 18px;
+}
+
+.signs {
+  margin-top: 17px;
+}
+
+.signin {
+  width: 344px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  margin-top: 20px;
+  border: 1px solid #E0E0E0;
+}
+
+.signin .block {
+  padding: 20px;
+}
+
+.signin .block p {
+  font-size: 14px;
+}
+.signin .block .btn {
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
+}
+
+.signin .title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.7em;
+  border-bottom: 1px solid #E0E0E0;
+}

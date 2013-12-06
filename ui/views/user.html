@@ -1,0 +1,16 @@
+<div class="modal ng-scope" class="span9">
+  <div class="modal-header">
+    <h3>User Information</h3>
+  </div>
+  <div class="modal-body">
+    <p><strong>Display Name: </strong>{{user.displayName}}</p>
+    <p><strong>Given Name: </strong>{{user.name.givenName}}</p>
+    <p><strong>Family Name: </strong>{{user.name.familyName}}</p>
+    <p><strong>Email(s): </strong><span ng-repeat="email in user.emails">{{email}}</span></p>
+    <br />
+    <p><a href="#" ng-controller="DeleteUserModalCtrl" ng-click="openDialog()">Delete Account</a></p>
+  </div>
+  <div class="modal-footer">
+    <button ng-click="close()" class="btn btn-small">Close</button>
+  </div>
+</div>
