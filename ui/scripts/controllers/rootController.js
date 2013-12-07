@@ -111,6 +111,7 @@ define(['controllers/controllers', 'services/nodeService'],
         }
         
         $rootScope.focusNode = function(node) {
+          
           angular.forEach($rootScope.nodes, function(value, key) {
             if (value._id === node.name) {
               if ($rootScope.shift) {
@@ -177,65 +178,35 @@ define(['controllers/controllers', 'services/nodeService'],
            }
         });
 
-        //Setting some of the view
-        var navigationHeight = $(".navigation").height();
-        var inspectorWidth = 321;
-        $scope.inspectorOn = true;
-        $scope.window = {
-          width: $(window).height(),
-          height: $(window).width()
-        };
-        $scope.navigation = {
-          width: $scope.window.width,
-          height: 44
-        };
-        $scope.inspector = {
-          width: 321,
-          height: $scope.window.height - $scope.navigation.height
-        };
-        $scope.canvas = {
-          width: $scope.window.width - $scope.inspector.width - 2,
-          height: $scope.window.height - $scope.navigation.height
-        };
-
-        //Listen for the broadcast of when the screen resizes
-        $scope.$on('resize', function(event, windowWidth, windowHeight) {
-          $scope.window.width = windowWidth;
-          $scope.window.height = windowHeight;
-          $("#viewport").width($(window).width() - $(".inspector").width());
-          $("canvas").attr('width', $(window).width() - $(".inspector").width());
-          $("#viewport").height($(window).height() - navigationHeight);
-          $("canvas").attr('height', $(window).height() - navigationHeight);
-          $("canvas").css('left', $(".inspector").width());
-          $("#viewport").css("top", $(window).height() - $("#viewport").height() + 1);
-          $(".inspector").height($("#viewport").height());
-          $(".inspector").width(inspectorWidth);
-        });
-
-        //INITIAL STUFF
-        $("#viewport").width($(window).width() - $(".inspector").width());
-        $("canvas").attr('width', $(window).width() - $(".inspector").width());
-        $("#viewport").height($(window).height() - navigationHeight);
-        $("canvas").attr('height', $(window).height() - navigationHeight);
-        $("canvas").css('left', $(".inspector").width());
-        $("#viewport").css("top", $(window).height() - $("#viewport").height() + 1);
-        $(".inspector").height($("#viewport").height());
-        $(".inspector").width(inspectorWidth);
-        
-      }
-    ]);
-
-    //Inspector Controller
-    controllers.controller('InspectorCtrl', ['$scope', '$rootScope', 'NodeService',
-      function($scope, $rootScope) {
-
         $rootScope.$watch('focusedNode', function() {
+          $rootScope.log('dsadas dsdasdad ds adas');
           if ($rootScope.focusedNode !== null && $rootScope.focusedNode !== undefined) {
             $rootScope.$broadcast('refreshCanvas');
-            var id = "#" + $rootScope.focusedNode._id.toString()
-            $('.inner').scrollTo($(id), 600);
+            var id = "#" + $rootScope.focusedNode._id.toString();
+            $('.inspector').scrollTo($(id), 600);
           }
         });
+
+        //Setting some of the view
+        $scope.$on('resize', function(event, windowWidth, windowHeight) {
+          var canv = $("canvas");
+          var canvHolder = $('#canvas-holder');
+          var nav = $('.navigation');
+          canv.attr('width', canvHolder.width());
+          canv.attr('height', $(window).height() - nav.height() - 1);
+          canv.css('width', canvHolder.width());
+          canv.css('height', $(window).height() - nav.height() - 1);
+          $('.main-holder').css('height', $(window).height() - nav.height() - 1);
+        });
+        
+        var canv = $("canvas");
+        var canvHolder = $('#canvas-holder');
+        var nav = $('.navigation');
+        canv.attr('width', canvHolder.width());
+        canv.attr('height', $(window).height() - nav.height() - 1);
+        canv.css('width', canvHolder.width());
+        canv.css('height', $(window).height() - nav.height() - 1);
+        $('.main-holder').css('height', $(window).height() - nav.height() - 1);
       }
     ]);
 

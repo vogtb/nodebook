@@ -18,46 +18,13 @@
 
 </head>
 <body ng-controller="RootControl" resize>
-  <div id="content">
+  <div id="content row-fluid">
     <div class="navigation">
       <div class="inner">
         <div class="logo"><a href="#" ng-controller="AboutModalCtrl" ng-click="openDialog()"><img src="img/nodebook.png" /></a></div>
         <form class="navbar-search search-node">
           <input ng-model="query" type="text" class="search-query" placeholder="Search Nodebook" ng-enter="queryNodes()">
         </form>
-        <div class="btn-group graph-drop in-nav">
-          <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">Graphs&nbsp;<span class="caret"></span></a>
-          <ul class="dropdown-menu pull-right">
-            <li>
-              <a tabindex="-1" href="#" ng-click="loadPrimary()">
-                Primary Graph &nbsp; <span class="badge slate">{{nodes.length}}</span>
-              </a>
-            </li>
-            <li class="divider"></li>
-            <li ng-repeat="graph in graphs">
-              <a tabindex="-1" href="#" ng-click="loadGraphNodes(graph)">
-                {{graph.name}} &nbsp;<span class="badge" ng-class="graph.color">{{graph.nodes.length | plus}}</span>
-              </a>
-            </li>
-            <li ng-show="noGraphs()" class="disabled">
-              <a tabindex="-1" href="#">
-                <span>No Graphs Created</span>
-              </a>
-            </li>
-            <li class="divider"ng-show="areNodesFocused"></li>
-            <li><a tabindex="-1" href="#" id="forceTrigger" ng-controller="DiffModalCtrl" ng-click="openDialog()" ng-show="areNodesFocused">Compare Nodes</a></li>
-            <li class="divider"></li>
-            <li class="dropdown-submenu">
-              <a tabindex="-1" href="#">Demo Graphs</a>
-              <ul class="dropdown-menu">
-                <li><a tabindex="-1" href="#" ng-click="JackLondon()" id="jack">Jack London</a></li>
-              </ul>
-            </li>
-            <li class="divider"></li>
-            <li><a tabindex="-1" href="#" ng-controller="OverviewModalCtrl" ng-click="openDialog()">Overview</a></li>
-            <li><a tabindex="-1" href="#" ng-controller="CreateGraphModalControl" ng-click="openDialog()">Create graph</a></li>
-          </ul>
-        </div>
         <span class="current-graph" ng-show="currentGraph">
           <span ng-cloak class="title"><strong>Graph: &nbsp;</strong>{{currentGraph.name}}</span>
           <span ng-cloak class="badge {{currentGraph.color}}">{{currentGraph.nodes.length | plus}}</span>
@@ -84,32 +51,29 @@
         <div id="new" class="btn btn-small btn-primary pull-right in-nav" ng-controller="AddNodeModalCtrl" ng-click="openDialog()">New Node</div>
       </div>
     </div>
-    <div class="canvas-holder" ng-controller="GraphCtrl">
-      <canvas id="viewport"></canvas>
-    </div>
-    <div class="inspector" ng-controller="InspectorCtrl" ng-show="inspectorOn" ng-cloak>
-      <div class="inner">
-        <div class="node-view" id="{{node._id}}" ng-repeat="node in nodes" ng-class="{selected: node == focusedNode}" ng-click="focusFromText(node._id)">
-          <div class="_id" >{{node._id}}</div>
-          <div class="date">{{node.date | moment}}</div>
-          <div class="content" ng-cloak>
-            <span class="text" ng-cloak>{{node.text}}</span><a href="#" ng-controller="EditNodeModalCtrl" ng-click="openDialog(node)" class="edit">Edit Node</a>
-          </div>
-          <div class="actions">
-            <div class="btn-group">
-              <a class="btn btn-primary btn-mini dropdown-toggle" data-toggle="dropdown" href="#">Add to graph&nbsp;<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li ng-repeat="graph in graphs">
-                  <a tabindex="-1" href="#" ng-click="addToGraph(graph._id, node._id)">
-                    {{graph.name}} &nbsp;<span class="badge" ng-class="graph.color">{{graph.nodes.length + ' +'}}</span>
-                  </a>
-                </li>
-                <li class="divider"></li>
-                <li><a tabindex="-1" href="#" ng-controller="CreateGraphModalControl" ng-click="openDialog()">Create graph</a></li>
-              </ul>
+    <div class="row-fluid main-holder">
+      <div class="span6 inspector">
+        <div class="inner">
+          <div class="node-view" id="{{node._id}}" ng-repeat="node in nodes" ng-class="{selected: node == focusedNode}" ng-click="focusFromText(node._id)">
+            <div class="_id" >{{node._id}}</div>
+            <div class="date">{{node.date | moment}}</div>
+            <div class="content" ng-cloak>
+              <span class="text" ng-cloak>{{node.text}}</span><a href="#" ng-controller="EditNodeModalCtrl" ng-click="openDialog(node)" class="edit">Edit Node</a>
+            </div>
+            <div class="actions">
+              <div class="btn-group">
+                <a class="btn btn-primary btn-mini dropdown-toggle" data-toggle="dropdown" href="#">View As...&nbsp;<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a tabindex="-1" href="#">View as Root</a></li>
+                  <li><a tabindex="-1" href="#">View Neighbors</a></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="span6" id="canvas-holder" ng-controller="GraphCtrl">
+        <canvas id="viewport"></canvas>
       </div>
     </div>
   </div>

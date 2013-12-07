@@ -17,49 +17,16 @@ moment = require('moment'),
 SortedList = require("sortedlist"),
 natural = require('natural'),
 tokenizer = new natural.WordTokenizer();
-g = require("gremlin"),
 GoogleStrategy = require('passport-google').Strategy,
-stopwords = require('./lists/stopwords.json'),
-stopwords = SortedList.create({ unique: true }, stopwords),
-colors = {
-  "dino": "dino",
-  "purple": "purple",
-  "sky" : "sky",
-  "ocean": "ocean",
-  "red" : "red",
-  "clay" : "clay",
-  "pottery": "pottery",
-  "goldfish": "goldfish",
-  "chedder": "chedder",
-  "gameboy": "gameboy",
-  "forest": "forest",
-  "frog": "frog",
-  "kitchen": "kitchen",
-  "turq": "turq"
-};
-
-/*
-TINKER OBJECT DECLARATION
-*/
-var T = g.Tokens,
-    Direction = g.Direction,
-    Type = g.ClassTypes;
-var TinkerGraphFactory = g.java.import("com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory");
-var graphDB = TinkerGraphFactory.createTinkerGraphSync();
+stopwords = SortedList.create({ unique: true }, require('./lists/stopwords.json'));
 
 /*
 MONGOOSE OBJECT DECLARATION
 */
-var u, n, b;//user object, node object, and graph(branch) object
+var u, n, b;//user object, node object, and filter object
 
 
 // Passport session setup.
-//   To support persistent login sessions, Passport needs to be able to
-//   serialize users into and deserialize users out of the session.  Typically,
-//   this will be as simple as storing the user ID when serializing, and finding
-//   the user by ID when deserializing.  However, since this example does not
-//   have a database of user records, the complete Google profile is serialized
-//   and deserialized.
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
@@ -75,10 +42,6 @@ passport.use(new GoogleStrategy({
     realm: env.get("REALM")
   },
   function(identifier, profile, done) {
-    // To keep the example simple, the user's Google profile is returned to
-    // represent the logged-in user.  In a typical application, you would want
-    // to associate the Google account with a user record in your database,
-    // and return that user instead.
     profile.identifier = identifier;
     console.log('');
     console.log(identifier);
@@ -100,7 +63,7 @@ app.configure(function() {
   app.use(express.session({
     secret: env.get("SESSION_SECRET"),
     cookie: {
-      maxAge: 60480000 // 7 days
+      maxAge: 1209600 // 14days
     }
   }));
   app.use(passport.initialize());
@@ -129,7 +92,7 @@ var nodeSchema = new Schema({
   keywords: [String],
   date: String
 });
-var graphSchema = new Schema({
+var filterSchema = new Schema({
   UID: { type: String, index: true },
   name: String,
   nodes: [String],
@@ -137,7 +100,7 @@ var graphSchema = new Schema({
   date: Date,
   color: String
 });
-Graph = mongoose.model('Graph', graphSchema);
+Filter = mongoose.model('Filter', graphSchema);
 Node = mongoose.model('Node', nodeSchema);
 User = mongoose.model('User', userSchema);
 
@@ -592,19 +555,12 @@ db.once('open', function() {
 });
 
 
-
-
-
 /*
 MIDDLEWARE
 */
 //Ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    if (req.session.g == false || req.session.g == null || req.session.g == undefined) {
-      req.session.g = require('gremlin');
-      req.session.g.SetGraph(graphDB);
-    }
     return next();
     
   } else {
