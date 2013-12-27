@@ -333,7 +333,12 @@ app.delete('/api/:user', ensureAuthenticated, function(req, res) {
   var user = req.params.user;
   var uid = req.session.uid;
   if (user == uid) {
-    //@TODO: delete everything here.
+    Node.remove({UID: uid}, function(err, data) {
+      User.remove({UID: uid}, function() {
+        res.status(200);
+        res.end();
+      });
+    });
   }
 });
 
@@ -405,17 +410,4 @@ function getKeywords(text) {
     }
   });
   return words;
-}
-
-function matchGraphKeywords(keywords, others) {
-  var match = false;
-  for (var i = 0; i < keywords.length; i++) {
-    for (var j = 0; j < others.length; j++) {
-      if (keywords[i] == others[j]) {
-        match = true;
-        break;
-      }
-    }
-  }
-  return match;
 }
