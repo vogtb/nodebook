@@ -347,6 +347,8 @@ app.delete('/api/:user/nodes/:nid', ensureAuthenticated, function(req, res) {
       if (err) {
         console.log(err);
         res.status(400);
+      } else {
+        res.write(JSON.stringify({_id: nid}));
       }
       res.end();
     });

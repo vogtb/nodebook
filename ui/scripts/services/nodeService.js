@@ -49,11 +49,19 @@ function(services) {
     }
     
     //Will delete a single node
-    this.delete = function(nid, callback) {
+    this.delete = function(nid) {
       $http.delete('/api/' + GlobalService.getCookie('uid') +'/nodes/' + nid)
         .success(function(data, status, headers, config) {
           $rootScope.notify('Node deleted from database', 4000);
-          callback({_id: nid});
+          var newNodeList = new Array();
+          angular.forEach($rootScope.nodes, function(value, index) {
+            if (value._id !== data._id) {
+              newNodeList.push(value);
+            }
+          });
+          $rootScope.nodes = newNodeList;
+          GlobalService.connectionEngine();
+          $rootScope.$broadcast('removeNode', data._id);
         })
         .error(function(data, status, headers, config) {
           $rootScope.notify('Sorry, something went wrong', 4000);

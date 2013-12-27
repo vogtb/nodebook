@@ -47,6 +47,7 @@ function(services) {
     
     //Determines connections for the nodes
     this.connectionEngine = function() {
+      $rootScope.connections = new Array();
       for (var i = 0; i < $rootScope.nodes.length-1; i++) {
         for (var j = i+1; j < $rootScope.nodes.length; j++) {
           //Setting the weight of a given node

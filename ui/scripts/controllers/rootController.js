@@ -55,7 +55,7 @@ define(['controllers/controllers', 'services/nodeService'],
           angular.forEach($rootScope.nodes, function(value, key) {
             if (value._id === node.name) {
               if ($rootScope.shift) {
-                //@TODO: This does not seem to work on occasion. Sometimes compares a node to itself....
+                //@TODO: This doesn't really work in any useful way.
                 $rootScope.secondFocusedNode = $rootScope.nodes[key];
                 $rootScope.focusedPairConnectionData = $rootScope.findConnectionData($rootScope.secondFocusedNode, $rootScope.focusedNode);
                 $rootScope.focusedNode.mainKeywords = $rootScope.focusedPairConnectionData;
@@ -254,6 +254,10 @@ define(['controllers/controllers', 'services/nodeService'],
         $scope.addNode = function(a) {
           $scope.sys.addNode(a);
         }
+        
+        $scope.removeNode = function(id) {
+          $scope.sys.pruneNode(id);
+        }
 
         $scope.refresh = function() {
           $scope.sys.renderer.redraw();
@@ -261,6 +265,10 @@ define(['controllers/controllers', 'services/nodeService'],
 
         $scope.$on('resize', function() {
           $scope.refresh();
+        });
+        
+        $scope.$on('removeNode', function(event, message) {
+          $scope.removeNode(message);
         });
 
         $rootScope.$on('loaded', function() {

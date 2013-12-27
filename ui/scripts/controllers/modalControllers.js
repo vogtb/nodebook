@@ -199,18 +199,8 @@ function EditNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, GlobalSe
   };
   
   $scope.delete = function() {
-    NodeService.delete($scope.currentID, function(data) {
-      var newNodeList = [];
-      angular.forEach($rootScope.nodes, function(value, index) {
-        if (value._id !== data._id) {
-          newNodeList.push(value)
-        }
-      });
-      $rootScope.nodes = newNodeList;
-      $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
-      $rootScope.$broadcast('reloadSys');
-      $scope.close();
-    });
+    NodeService.delete($scope.currentID);
+    $scope.close();
   };
 }
 
