@@ -101,8 +101,8 @@ define(['controllers/controllers', 'services/nodeService'],
 
         $rootScope.$watch('focusedNode', function() {
           if ($rootScope.focusedNode !== null && $rootScope.focusedNode !== undefined) {
-            $rootScope.$broadcast('refreshCanvas');
-            var id = "#" + $rootScope.focusedNode._id.toString();
+            $rootScope.$broadcast('refreshGraph');
+            var id = "#" + $rootScope.focusedNode._id;
             $('.inspector').scrollTo($(id), 600);
           }
         });
@@ -148,7 +148,6 @@ define(['controllers/controllers', 'services/nodeService'],
                 particleSystem.screenPadding(60);
                 that.initMouseHandling();
               },
-
               redraw: function() {
                 particleSystem = $scope.sys;
                 particleSystem.screenSize(canvas.width, canvas.height);
@@ -245,7 +244,6 @@ define(['controllers/controllers', 'services/nodeService'],
           });
           $scope.sys.renderer = Renderer("#viewport");
           $scope.sys.start();
-          console.log($scope.sys.start());
         }
         
         $scope.addEdge = function(a, b) {
@@ -270,6 +268,10 @@ define(['controllers/controllers', 'services/nodeService'],
         
         $scope.$on('removeNode', function(event, message) {
           $scope.removeNode(message);
+        });
+        
+        $scope.$on('refreshGraph', function() {
+          $scope.refresh($scope.sys);
         });
 
         $rootScope.$on('loaded', function() {
