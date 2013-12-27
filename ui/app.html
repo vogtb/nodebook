@@ -25,10 +25,6 @@
         <form class="navbar-search search-node">
           <input ng-model="query" type="text" class="search-query" placeholder="Search Nodebook" ng-enter="queryNodes()">
         </form>
-        <span class="current-graph" ng-show="currentGraph">
-          <span ng-cloak class="title"><strong>Graph: &nbsp;</strong>{{currentGraph.name}}</span>
-          <span ng-cloak class="badge {{currentGraph.color}}">{{currentGraph.nodes.length | plus}}</span>
-        </span>
         <span class="current-graph" ng-show="queryResult.show">
           <span ng-cloak class="title"><strong>Query: &nbsp;</strong>{{queryResult.query}}</span>
           <span ng-cloak class="badge slate">{{nodes.length}}</span>
@@ -55,19 +51,19 @@
       <div class="span6 inspector">
         <div class="inner">
           <div class="node-view" id="{{node._id}}" ng-repeat="node in nodes" ng-class="{selected: node == focusedNode}" ng-click="focusFromText(node._id)">
-            <div class="_id" >{{node._id}}</div>
+            <div class="_id">{{node._id}}</div>
             <div class="date">{{node.date | moment}}</div>
             <div class="content" ng-cloak>
               <span class="text" ng-cloak>{{node.text}}</span><a href="#" ng-controller="EditNodeModalCtrl" ng-click="openDialog(node)" class="edit">Edit Node</a>
             </div>
             <div class="actions">
-              <div class="btn-group">
+              <!-- <div class="btn-group">
                 <a class="btn btn-primary btn-mini dropdown-toggle" data-toggle="dropdown" href="#">View As...&nbsp;<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li><a tabindex="-1" href="#">View as Root</a></li>
                   <li><a tabindex="-1" href="#">View Neighbors</a></li>
                 </ul>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>

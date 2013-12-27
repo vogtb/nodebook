@@ -17,7 +17,7 @@ function AddNodeModalCtrl($scope, $dialog){
   };
 }
 
-function AddNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, NodeService, GraphService, GlobalService) {
+function AddNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, NodeService, FilterService, GlobalService) {
   $scope.close = function(){
     dialog.close();
   };
@@ -69,36 +69,6 @@ function WelcomeModalInstanceCtrl($scope, $dialog, dialog, $rootScope) {
     }, 50);
   };
 }
-
-
-// Create Graph Modal and instance control
-function CreateGraphModalControl($scope, $dialog, $rootScope) {  
-  $scope.opts = {
-    backdrop: true,
-    keyboard: true,
-    backdropClick: true,
-    template:  'views/create-graph.html',
-    controller: 'CreateGraphModalInstanceControl'
-  };
-    
-  $scope.openDialog = function(){
-    var d = $dialog.dialog({dialogFade: false});
-    d.open('views/create-graph.html', 'CreateGraphModalInstanceControl');
-  };
-}
-
-function CreateGraphModalInstanceControl($scope, $dialog, dialog, $rootScope, NodeService, GraphService) {
-  $scope.close = function(){
-    dialog.close();
-  };
-
-  $scope.createGraph = function() {
-    $rootScope.log($scope.newGraphName);
-    GraphService.create($scope.newGraphName, $scope.selectedColor.name, $scope.keywords);
-    $scope.close();
-  };
-}
-
 
 function UserModalCtrl($scope, $dialog, $rootScope){
   $scope.opts = {
@@ -205,7 +175,6 @@ function EditNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, GlobalSe
   
   $scope.editTextChanged = false;
   $scope.new_text = '';
-  $scope.currentGraph = '';
   if ($rootScope.currentlyEditing !== null) {
     var middle_man = $rootScope.currentlyEditing.text;
     $scope.edit_text = middle_man;
@@ -240,43 +209,6 @@ function EditNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, GlobalSe
       $rootScope.nodes = newNodeList;
       $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
       $rootScope.$broadcast('reloadSys');
-      $scope.close();
-    });
-  };
-}
-
-
-function OverviewModalCtrl($scope, $dialog, $rootScope){
-  $scope.opts = {
-    backdrop: true,
-    keyboard: true,
-    backdropClick: true,
-    template:  'views/graph-overview.html',
-    controller: 'OverviewModalInstanceCtrl'
-  };
-
-  $scope.openDialog = function(node){
-    $rootScope.currentlyEditing = node;
-    var d = $dialog.dialog({dialogFade: false});
-    d.open('views/graph-overview.html', 'OverviewModalInstanceCtrl');
-  };
-}
-
-function OverviewModalInstanceCtrl($scope, $dialog, dialog, $rootScope, GraphService) {
-  
-  $scope.close = function(){
-    dialog.close();
-  };
-  
-  $scope.delete = function(gid){
-    GraphService.delete(gid, function(data) {
-      var toReturn = [];
-      angular.forEach($rootScope.graphs, function(value, key) {
-        if (value._id !== gid) {
-          toReturn.push(value);
-        }
-      });
-      $rootScope.graphs = toReturn;
       $scope.close();
     });
   };

@@ -2,7 +2,7 @@ define(['services/services'],
 
 function(services) {
 
-  services.service('GlobalService', function($http) {
+  services.service('GlobalService', function($http, $rootScope) {
 
     this.getCookie = function(c_name) {
       var c_value = document.cookie;
@@ -35,38 +35,34 @@ function(services) {
       return same;
     }
 
-    this.getUserData = function(uid, callback) {
+    this.getUserData = function(uid) {
       $http.get('/api/' + uid)
         .success(function(data, status, headers, config) {
-          callback(data);
+          $rootScope.user = data;
         })
         .error(function(data, status, headers, config) {
-          callback(data);
+          //@TODO: throw up an error.
         });
     }
     
-    //Determines connections when given a set of nodes
-    this.connectionEngine = function(nodes) {
-      var connections = [];
-      //Matching.
-      for (var i = 0; i < nodes.length-1; i++) {
-        for (var j = i+1; j < nodes.length; j++) {
+    //Determines connections for the nodes
+    this.connectionEngine = function() {
+      for (var i = 0; i < $rootScope.nodes.length-1; i++) {
+        for (var j = i+1; j < $rootScope.nodes.length; j++) {
           //Setting the weight of a given node
-          var weight = this.arraySame(nodes[i].keywords, nodes[j].keywords).length;
+          var weight = this.arraySame($rootScope.nodes[i].keywords, $rootScope.nodes[j].keywords).length;
           if (weight > 0) {
-            var connection = {
-              to: nodes[i]._id,
-              from: nodes[j]._id,
+            $rootScope.connections.push({
+              to: $rootScope.nodes[i]._id,
+              from: $rootScope.nodes[j]._id,
               weight: weight
-            };
-            connections.push(connection);
+            });
           }
         }
       }
-      for (var i = 0; i < nodes.length-1; i++) {
-        connections.push({from: nodes[i]._id, to: nodes[i+1]._id, dateLine: true, weight: 1});
+      for (var i = 0; i < $rootScope.nodes.length-1; i++) {
+        $rootScope.connections.push({from: $rootScope.nodes[i]._id, to: $rootScope.nodes[i+1]._id, dateLine: true, weight: 1});
       }
-      return connections;
     }
     
     this.sendFeedback = function(feedback) {

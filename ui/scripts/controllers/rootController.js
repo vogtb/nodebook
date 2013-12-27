@@ -3,51 +3,16 @@ define(['controllers/controllers', 'services/nodeService'],
 
 
     //Root Control
-    controllers.controller('RootControl', ['$scope', '$rootScope', 'NodeService', 'GraphService', 'GlobalService',
-      function($scope, $rootScope, NodeService, GraphService, GlobalService) {
+    controllers.controller('RootControl', ['$scope', '$rootScope', 'NodeService', 'FilterService', 'GlobalService',
+      function($scope, $rootScope, NodeService, FilterService, GlobalService) {
         $rootScope.currentlyEditing = null;
         $rootScope.focusedNode = null;
         $rootScope.secondFocusedNode = null;
-        $rootScope.currentGraph;
         $rootScope.shift = false;
-        $rootScope.graphs = [];
-        $rootScope.colorsByName = {
-          "slate": "#333333",
-          "dino": "#9747B7",
-          "purple": "#C36FE6",
-          "sky" : "#349FE4",
-          "ocean": "#2A87C6",
-          "red" : "#E74C3C",
-          "clay" : "#C0392B",
-          "pottery": "#E25900",
-          "goldfish": "#F28522",
-          "chedder": "#FAA112",
-          "gameboy": "#F7C90D",
-          "forest": "#26AB2C",
-          "frog": "#2FD876",
-          "kitchen": "#19C4A4",
-          "turquoise": "#16AC8F"
-        };
-        $rootScope.colors = [
-          {name: "slate"},
-          {name: "dino"},
-          {name: "purple"},
-          {name: "sky"},
-          {name: "ocean"},
-          {name: "red"},
-          {name: "clay"},
-          {name: "pottery"},
-          {name: "goldfish"},
-          {name: "chedder"},
-          {name: "gameboy"},
-          {name: "forest"},
-          {name: "frog"},
-          {name: "kitchen"},
-          {name: "turquoise"}
-        ];
-        $rootScope.selectedColor = $rootScope.colors[0];
-        $rootScope.newGraphName;
+        $rootScope.maxWeight = 0;
         $rootScope.query;
+        $rootScope.nodes = new Array();
+        $rootScope.connections = new Array();
         $rootScope.uid = GlobalService.getCookie('uid');
 
         //Standard alert
@@ -63,15 +28,7 @@ define(['controllers/controllers', 'services/nodeService'],
           $rootScope.notify_text = text;
           $('.notify').fadeIn(100).delay(time).fadeOut(100);
         };
-        //Are there no graphs?
-        $rootScope.noGraphs = function() {
-          if ($rootScope.graphs.length == 0) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-        
+
         //When a user focuses on a node, we reflect that change in graph.
         $rootScope.focusFromText = function(nid) {
           angular.forEach($rootScope.nodes, function(value, key) {
@@ -92,24 +49,7 @@ define(['controllers/controllers', 'services/nodeService'],
           }
           return returnData;
         }
-        
-        //Adds an existing node to graph
-        $rootScope.addToGraph = function(gid, nid) {
-          $rootScope.log(gid);
-          GraphService.postToGraph(gid, nid, function(data) {
-            $rootScope.graphs = data;
-            $rootScope.log(data);
-          })
-        }
-        //Loads and displays a graph.
-        $rootScope.loadGraphNodes = function(graph) {
-          GraphService.load(graph._id);
-        }
-        
-        $rootScope.loadPrimary = function() {
-          GraphService.loadPrimary();
-        }
-        
+
         $rootScope.focusNode = function(node) {
           
           angular.forEach($rootScope.nodes, function(value, key) {
@@ -132,38 +72,19 @@ define(['controllers/controllers', 'services/nodeService'],
             }
           });
         }
-        
+
         $rootScope.queryNodes = function() {
           NodeService.query($scope.query);
         }
-        
-        $rootScope.JackLondon = function() {
-          GlobalService.jackLondon(function(data) {
-            $rootScope.currentGraph = {name: 'Jack London\'s Biography', nodes:$rootScope.nodes};
-            $rootScope.nodes = data;
-            $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
-            $rootScope.maxWeight = 0;
-            $rootScope.focusedNode = null;
-            $rootScope.secondFocusedNode = null;
-            $rootScope.$broadcast('loaded');
-            $rootScope.$broadcast('refreshCanvas');
-            $rootScope.notify('Demo Graph loaded', 4000);
-          });
-        }
-        
-        /*INITIALIZATION LOADING.*/
-        //Loading the graphs
-        GraphService.loadGraphs(function(data) {
-            $rootScope.graphs = data;
-        });
-        
-        //Loading the main graph's nodes, which is all nodes
-        GraphService.loadPrimary();
 
-        GlobalService.getUserData($rootScope.uid, function(data) {
-          $rootScope.user = data;
+        /*INITIAL LOADING.*/
+        NodeService.getAll();
+        GlobalService.getUserData($rootScope.uid);
+        $rootScope.$watch('nodes', function() {
+          GlobalService.connectionEngine($rootScope.nodes);
+          $rootScope.$broadcast('loaded');
         });
-        
+
         //Binding shift key for node comparison
         $(document).bind('keydown', function(e) {
           var code = e.keyCode || e.which;
@@ -179,7 +100,6 @@ define(['controllers/controllers', 'services/nodeService'],
         });
 
         $rootScope.$watch('focusedNode', function() {
-          $rootScope.log('dsadas dsdasdad ds adas');
           if ($rootScope.focusedNode !== null && $rootScope.focusedNode !== undefined) {
             $rootScope.$broadcast('refreshCanvas');
             var id = "#" + $rootScope.focusedNode._id.toString();
@@ -211,12 +131,11 @@ define(['controllers/controllers', 'services/nodeService'],
     ]);
 
     //Graph Controller
-    controllers.controller('GraphCtrl', ['$scope', '$rootScope',
-      function($scope, $rootScope) {
+    controllers.controller('GraphCtrl', ['$scope', '$rootScope', 'GlobalService',
+      function($scope, $rootScope, GlobalService) {
         $scope.sys = null;
 
         $scope.init = function() {
-          //Initialize the renderer right away.
           Renderer = function(canvas) {
             var canvas = $(canvas).get(0);
             var ctx = canvas.getContext("2d");
@@ -231,50 +150,14 @@ define(['controllers/controllers', 'services/nodeService'],
               },
 
               redraw: function() {
+                particleSystem = $scope.sys;
                 particleSystem.screenSize(canvas.width, canvas.height);
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 var weight = 0;
                 particleSystem.eachEdge(function(edge, pt1, pt2) {
                   weight = ((edge.data.weight / $rootScope.maxWeight)*0.44) + 0.22;
-                  if (edge.data.dateLine) {
-                    ctx.strokeStyle = "rgba(67,141,224, 0.0)";
-                  } else {
-                    ctx.strokeStyle = "rgba(0,0,0, " + weight + ")";
-                  }
-                  ctx.lineWidth = 1.1 + weight*1.18;
-                  ctx.beginPath();
-                  ctx.moveTo(pt1.x, pt1.y);
-                  ctx.lineTo(pt2.x, pt2.y);
-                  ctx.stroke();
-                });
-                particleSystem.eachNode(function(node, pt) {
-                  ctx.fillStyle = "#333333";
-                  var w = 5;
-                  if (($rootScope.focusedNode !== null && node.name === $rootScope.focusedNode._id) || ($rootScope.secondFocusedNode !== null && node.name === $rootScope.secondFocusedNode._id)) {
-                    if ($rootScope.currentGraph !== null && $rootScope.currentGraph !== undefined) {
-                      var color = $rootScope.colorsByName[$rootScope.currentGraph.color];
-                    } else {
-                      color = "#438DE0";
-                    }
-                    ctx.fillStyle = color;
-                    var w = 8;
-                  }
-                  ctx.beginPath();
-                  ctx.arc(pt.x, pt.y, w, 0, Math.PI * 2, true);
-                  ctx.closePath();
-                  ctx.fill();
-                });
-              },
-              refresh: function(system) {  
-                particleSystem = system;
-                particleSystem.screenSize(canvas.width, canvas.height);
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                var weight = 0;
-                particleSystem.eachEdge(function(edge, pt1, pt2) {
-                  weight = ((edge.data.weight / $rootScope.maxWeight)*0.44) + 0.22;
-                  if (edge.data.dateLine) {
+                  if (edge.data.dateLine == true) {
                     ctx.strokeStyle = "rgba(67,141,224, 0.0)";
                   } else {
                     ctx.strokeStyle = "rgba(0,0,0, " + weight + ")";
@@ -289,12 +172,7 @@ define(['controllers/controllers', 'services/nodeService'],
                   ctx.fillStyle = "#333333";
                   var w = 5;
                   if ($rootScope.focusedNode !== null && node.name === $rootScope.focusedNode._id) {
-                    if ($rootScope.currentGraph !== null && $rootScope.currentGraph !== undefined) {
-                      var color = $rootScope.colorsByName[$rootScope.currentGraph.color];
-                    } else {
-                      color = "#438DE0";
-                    }
-                    ctx.fillStyle = color;
+                    ctx.fillStyle = "#438DE0";
                     var w = 8;
                   }
                   ctx.beginPath();
@@ -350,8 +228,7 @@ define(['controllers/controllers', 'services/nodeService'],
                     return false;
                   }
                 }
-                $(canvas)
-                  .mousedown(handler.clicked);
+                $(canvas).mousedown(handler.clicked);
               },
             }
             return that;
@@ -377,25 +254,16 @@ define(['controllers/controllers', 'services/nodeService'],
         $scope.addNode = function(a) {
           $scope.sys.addNode(a);
         }
-        
-        $scope.refresh = function(sys) {
-          $scope.sys.renderer.refresh(sys);
+
+        $scope.refresh = function() {
+          $scope.sys.renderer.redraw();
         }
-        
+
         $scope.$on('resize', function() {
-          $scope.refresh($scope.sys);
+          $scope.refresh();
         });
 
-        $rootScope.$watch('inspectorOn', function() {
-          $scope.refresh($scope.sys);
-        });
-        
-        $rootScope.$on('refreshCanvas', function() {
-          $scope.refresh($scope.sys);
-        });
-        
-        
-        $rootScope.$on('reloadSys', function() {
+        $rootScope.$on('loaded', function() {
           $scope.sys.eachNode(function(node, pt) {
             $scope.sys.pruneNode(node);
           });
@@ -419,46 +287,20 @@ define(['controllers/controllers', 'services/nodeService'],
             $scope.sys.stop();
           }, 3000);
         });
-        
-        $rootScope.$on('loaded', function() {
-          $scope.sys.eachNode(function(node, pt) {
-            $scope.sys.pruneNode(node);
-          });
-          for (var i = 0; i < $rootScope.nodes.length; i++) {
-            $scope.sys.addNode($rootScope.nodes[i]._id);
-          }
-          for (var i = 0; i < $rootScope.connections.length; i++) {
-            $scope.sys.addEdge($rootScope.connections[i].to,
-              $rootScope.connections[i].from,
-              {
-                weight: $rootScope.connections[i].weight,
-                dateLine: $rootScope.connections[i].dateLine
-              }
-            );
-            if ($rootScope.connections[i].weight > $rootScope.maxWeight ) {
-              $rootScope.maxWeight = $rootScope.connections[i].weight;
-            }
-          }
-        });
-        
+
         //Initialize itself
         $scope.init();
-        
-        //Stop rendering after 3 seconds.
-        setTimeout(function() {
-          $scope.sys.stop();
-        }, 3000);
-        
+
         //Update the canvas only for 0.7 seconds when clicked on.
         $('canvas').on('click', function() {
           $scope.sys.start();
           setTimeout(function() {
             $scope.sys.stop();
           }, 700);
-        });  
-        
+        });
+
       }
-      
+
     ]);
 
 });

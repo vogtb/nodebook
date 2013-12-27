@@ -28,7 +28,7 @@ function(services) {
           $rootScope.$broadcast('reloadSys');
         })
         .error(function(data, status, headers, config) {
-          $rootScope.notify('Sorry, something went wrong :(', 4000);
+          $rootScope.notify('Sorry, something went wrong', 4000);
         });
     }
     
@@ -44,7 +44,7 @@ function(services) {
           callback(data);
         })
         .error(function(data, status, headers, config) {
-          $rootScope.notify('Sorry, something went wrong :(', 4000);
+          $rootScope.notify('Sorry, something went wrong', 4000);
         });
     }
     
@@ -56,18 +56,18 @@ function(services) {
           callback({_id: nid});
         })
         .error(function(data, status, headers, config) {
-          $rootScope.notify('Sorry, something went wrong :(', 4000);
+          $rootScope.notify('Sorry, something went wrong', 4000);
         });
     }
     
-    //Will get all nodes (aka the Primary Graph)
+    //Will get all nodes
     this.getAll = function(){
       $http.get('/api/' + GlobalService.getCookie('uid') +'/nodes')
         .success(function(data, status, headers, config) {
-          return data;
+          $rootScope.nodes = data;
         })
         .error(function(data, status, headers, config) {
-          $rootScope.notify('Sorry, something went wrong :(', 4000);
+          $rootScope.notify('Sorry, something went wrong.', 4000);
         });
     }
     
@@ -100,7 +100,7 @@ function(services) {
           }
         })
         .error(function(data, status, headers, config) {
-          $rootScope.notify('Sorry, something went wrong :(', 4000);
+          $rootScope.notify('Sorry, something went wrong', 4000);
         });
     }
     

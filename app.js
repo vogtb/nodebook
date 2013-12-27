@@ -23,7 +23,7 @@ stopwords = SortedList.create({ unique: true }, require('./lists/stopwords.json'
 /*
 MONGOOSE OBJECT DECLARATION
 */
-var u, n, b;//user object, node object, and filter object
+var u, n, f;//user object, node object, and filter object
 
 
 // Passport session setup.
@@ -63,7 +63,7 @@ app.configure(function() {
   app.use(express.session({
     secret: env.get("SESSION_SECRET"),
     cookie: {
-      maxAge: 1209600 // 14days
+      maxAge: 1209600
     }
   }));
   app.use(passport.initialize());
@@ -97,16 +97,15 @@ var filterSchema = new Schema({
   name: String,
   nodes: [String],
   keywords: [String],
-  date: Date,
-  color: String
+  date: Date
 });
-Filter = mongoose.model('Filter', graphSchema);
+Filter = mongoose.model('Filter', filterSchema);
 Node = mongoose.model('Node', nodeSchema);
 User = mongoose.model('User', userSchema);
 
 
 /*
-TRADITIONAL ENDPOINTS
+HARD-CODED ENDPOINTS
 */
 app.get('/', function(req, res){
   res.send(fs.readFileSync('ui/home.html', {encoding: 'utf8'}));
@@ -131,19 +130,6 @@ app.get('/terms', function(req, res){
 
 app.get('/goodbye', function(req, res){
   res.send(fs.readFileSync('ui/goodbye.html', {encoding: 'utf8'}));
-});
-
-app.get('/ping', function(req, res){
-  res.status(200);
-  res.end();
-});
-
-app.get('/demo/jacklondon', function(req, res){
-  Node.find({UID: 'JACK_LONDON'}, function(err, data) {
-    console.log(data);
-    res.write(JSON.stringify(data));
-    res.end();
-  });
 });
 
 // GET /auth/google
@@ -179,11 +165,7 @@ app.get('/auth/google/return',
           res.redirect('/nb');
         });
       } else {
-        Graph.find({UID: req.session.uid}, function(err, data) {
-          req.session.graphs = data;
-          console.log(req.session);
-          res.redirect('/nb');
-        });
+        res.redirect('/nb');
       }
     });
   });
@@ -255,70 +237,6 @@ app.get('/api/:user/nodes/:nid', ensureAuthenticated, function(req, res) {
   res.end();
 });
 
-//GET all user graph data (just graphs, not nodes.)
-app.get('/api/:user/graphs', ensureAuthenticated, function(req, res) {
-  var user = req.params.user;
-  var nid = req.params.nid;
-  var uid = req.session.uid;
-  if (user == uid) {
-    Graph.find({UID: user}, function(err, data) {
-      if (data.length > 0) {
-        res.write(JSON.stringify(data));
-        res.end();
-      } else {
-        res.write(JSON.stringify([]));
-        res.end();
-      }
-    });
-  } else {
-    res.status(400);
-    res.end();
-  }
-});
-
-//GET user graph by gid, including nodes
-app.get('/api/:user/graphs/:gid', ensureAuthenticated, function(req, res) {
-  var user = req.params.user;
-  var gid = req.params.gid;
-  var uid = req.session.uid;
-  if (user == uid) {
-    Graph.find({UID: user, _id: gid}, function(err, data) {
-      if (data.length > 0) {
-        Node.find({UID: user}, function(err, nodeData){
-          var graphKeywords = data[0].keywords;
-          var toReturn = [];
-          for (var i = 0; i < nodeData.length; i++) {
-            if (matchGraphKeywords(graphKeywords, nodeData[i].keywords)) {
-              toReturn.push(nodeData[i]);
-            } else {
-              for (var j = 0; j < data[0].nodes.length; j++) {
-                if (data[0].nodes[j] == nodeData[i]._id) {
-                  toReturn.push(nodeData[i]);
-                }
-              }
-            }
-          }
-          toReturn = toReturn.sort(function(a, b) {
-            if (moment(a.date, 'YYYY-MM-DD HH:mm:ss').toDate() > moment(b.date, 'YYYY-MM-DD HH:mm:ss').toDate()) {
-              return -1;
-            } else {
-              return 1;
-            }
-          });
-          res.write(JSON.stringify(toReturn));
-          res.end();
-        });
-      } else {
-        res.status(404);
-        res.end();
-      }
-    });
-  } else {
-    res.status(400);
-    res.end();
-  }
-});
-
 //POST requests------------------------------------------------------------
 //POST a single node for a single user
 app.post('/api/:user/nodes', ensureAuthenticated, function(req, res) {
@@ -355,64 +273,6 @@ app.post('/api/:user/query', ensureAuthenticated, function(req, res) {
     var query = getKeywords(req.body.query);
     Node.find({UID: uid, keywords: { $in: query }}, function(err, data) {
       res.write(JSON.stringify(data));
-      res.end();
-    });
-  } else {
-    res.status(400);
-    res.end();
-  }
-});
-
-//POST a node to a specific graph, returns all graphs.
-app.post('/api/:user/graphs/:graph', ensureAuthenticated, function(req, res) {
-  var user = req.params.user;
-  var graph = req.params.graph;
-  var nid = req.body._id;
-  var uid = req.session.uid;
-  if (user == uid) {
-    Graph.update({UID: user, _id: graph}, {$addToSet: {nodes: nid}}, {upsert:true}, function(err, data) {
-      if (err) {
-        res.status(400);
-        res.end();
-      } else {
-        //Return all graphs
-        Graph.find({UID: user}, function(err, data) {
-          if (data.length > 0) {
-            res.write(JSON.stringify(data));
-          } else {
-            res.status(404);
-          }
-          res.end();
-        });        
-      }
-    });
-  } else {
-    res.status(400);
-    res.end();
-  }
-});
-
-//POST a new graph
-app.post('/api/:user/graphs', ensureAuthenticated, function(req, res) {
-  var user = req.params.user;
-  var uid = req.session.uid;
-  if (user == uid) {
-    b = new Graph({
-      UID: req.session.uid,
-      nodes: ((req.body.nodes != undefined) ? req.body.nodes : []),
-      date: req.body.date,
-      color: req.body.color,
-      keywords: ((req.body.keywords != undefined) ? getKeywords(req.body.keywords) : []),
-      description: req.body.description,
-      name: req.body.name
-    });
-    b.save(function(err) {
-      console.log(b);
-      if (err) {
-        res.status(404);
-      } else {
-        res.write(JSON.stringify(b));
-      }
       res.end();
     });
   } else {
@@ -468,23 +328,12 @@ app.put('/api/:user/nodes/:nid', ensureAuthenticated, function(req, res) {
 });
 
 //DELETE requests------------------------------------------------------------
-//DELETE a user and all related nodes, and graphs
+//DELETE a user and all related objects
 app.delete('/api/:user', ensureAuthenticated, function(req, res) {
   var user = req.params.user;
   var uid = req.session.uid;
   if (user == uid) {
-    User.remove({UID: uid}, function(err, data) {
-      Graph.remove({UID: uid}, function(err, data) {
-        Node.remove({UID: uid}, function(err, data) {
-          if (err) {
-            console.log(err);
-          } else {
-            res.status(200);
-            res.end();
-          }
-        });
-      });
-    });
+    //@TODO: delete everything here.
   }
 });
 
@@ -498,41 +347,8 @@ app.delete('/api/:user/nodes/:nid', ensureAuthenticated, function(req, res) {
       if (err) {
         console.log(err);
         res.status(400);
-      } else {
-        Graph.update({UID: uid, nodes: nid}, {$pull: {nodes: nid}}, function(err, data) {
-          if (err) {
-            console.log(err);
-            res.status(400);
-            res.end();
-          } else {
-            res.status(200);
-            res.end();
-          }
-        });
       }
       res.end();
-    });
-  } else {
-    res.status(400);
-    res.end();
-  }
-});
-
-//DELETE a specific graph
-app.delete('/api/:user/graphs/:gid', ensureAuthenticated, function(req, res) {
-  var user = req.params.user;
-  var uid = req.session.uid;
-  var gid = req.params.gid;
-  if (user == uid) {
-    Graph.remove({UID: uid, _id: gid}, function(err, data) {
-      if (err) {
-        console.log(err);
-        res.status(400);
-        res.end();
-      } else {
-        res.status(200);
-        res.end();
-      }
     });
   } else {
     res.status(400);
@@ -562,7 +378,6 @@ MIDDLEWARE
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
-    
   } else {
     res.redirect('/signin')
   }
