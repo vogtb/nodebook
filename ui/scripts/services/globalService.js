@@ -24,12 +24,12 @@ function(services) {
     }
     
     this.arraySame = function(first, second) {
-      var same=[];
+      first.sort();
+      second.sort();
+      var same = [];
       for (var i = 0; i < first.length; i++) {
-        for (var j = i; j < second.length; j++) {
-          if (first[i] == second[i]) {
-            same.push(first[i]);
-          }
+        if (second.indexOf(first[i]) > -1) {
+          same.push(first[i]);
         }
       }
       return same;

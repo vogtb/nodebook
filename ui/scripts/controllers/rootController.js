@@ -235,16 +235,17 @@ define(['controllers/controllers', 'services/nodeService'],
           }
 
           $scope.sys = arbor.ParticleSystem({
-            friction: .3,
+            friction: 1,
             stiffness: 300,
-            repulsion: 10000,
-            gravity: true,
-            fps: 20,
+            repulsion: 1000,
+            gravity: false,
+            fps: 1,
             precision: 0.1,
-            dt: 0.1
+            dt: 0.02
           });
           $scope.sys.renderer = Renderer("#viewport");
           $scope.sys.start();
+          console.log($scope.sys.start());
         }
         
         $scope.addEdge = function(a, b) {
@@ -293,7 +294,7 @@ define(['controllers/controllers', 'services/nodeService'],
           $scope.refresh($scope.sys);
           setTimeout(function() {
             $scope.sys.stop();
-          }, 3000);
+          }, 300);
         });
 
         //Initialize itself
