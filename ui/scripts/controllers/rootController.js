@@ -15,14 +15,6 @@ define(['controllers/controllers', 'services/nodeService'],
         $rootScope.connections = new Array();
         $rootScope.uid = GlobalService.getCookie('uid');
 
-        //Standard alert
-        $rootScope.alert = function(text) {
-          alert(text);
-        };
-        //Standard log
-        $rootScope.log = function(text) {
-          console.log(text);
-        };
         //Throw up notification
         $rootScope.notify = function(text, time) {
           $rootScope.notify_text = text;
@@ -37,31 +29,16 @@ define(['controllers/controllers', 'services/nodeService'],
             }
           });
         }
-        
-        $rootScope.findConnectionData = function(nodeOne, nodeTwo) {
-          var returnData = [];
-          for (var i = 0; i < nodeOne.keywords.length; i++) {
-            for (var j = 0; j < nodeTwo.keywords.length; j++) {
-              if (nodeOne.keywords[i] == nodeTwo.keywords[j]) {
-                returnData.push(nodeOne.keywords[i]);
-              }
-            }
-          }
-          return returnData;
-        }
 
         $rootScope.focusNode = function(node) {
-          
           angular.forEach($rootScope.nodes, function(value, key) {
             if (value._id === node.name) {
               if ($rootScope.shift) {
-                //@TODO: This doesn't really work in any useful way.
                 $rootScope.secondFocusedNode = $rootScope.nodes[key];
-                $rootScope.focusedPairConnectionData = $rootScope.findConnectionData($rootScope.secondFocusedNode, $rootScope.focusedNode);
-                $rootScope.focusedNode.mainKeywords = $rootScope.focusedPairConnectionData;
-                $rootScope.secondFocusedNode.mainKeywords = $rootScope.focusedPairConnectionData;
+                $rootScope.focusedPairConnectionData = GlobalService.arraySame($rootScope.secondFocusedNode.keywords, $rootScope.focusedNode.keywords);
                 if ($rootScope.focusedPairConnectionData.length > 0) {
-                  $rootScope.log($rootScope.focusedPairConnectionData);
+                  $rootScope.focusedNode.commonKeywords = $rootScope.focusedPairConnectionData;
+                  $rootScope.secondFocusedNode.commonKeywords = $rootScope.focusedPairConnectionData;
                   $('#forceTrigger').trigger('click');
                 }
               } else {

@@ -3,13 +3,11 @@
     <h3>Compare Nodes: <span>{{secondFocusedNode.date | shortmoment}} to {{focusedNode.date | shortmoment}}</span></h3>
   </div>
   <div class="modal-body">
-    <div>Common Keywords: <span class="label label-info" ng-repeat="word in focusedPairConnectionData">{{word}}</span></div>
+    <div>Common Keywords: <span ng-repeat="word in focusedPairConnectionData"><span class="label label-info">{{word}}</span>&nbsp;</span></div>
     <br>
-    <div>{{focusedNode._id}}</div>
     <div>{{focusedNode.date | moment}}</div>
     <div ng-bind-html-unsafe="focusedNode | highlight"></div>
     <br/>
-    <div>{{secondFocusedNode._id}}</div>
     <div>{{secondFocusedNode.date | moment}}</div>
     <div ng-bind-html-unsafe="secondFocusedNode | highlight"></div>
   </div>

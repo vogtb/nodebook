@@ -22,7 +22,7 @@ function(services) {
       }
       return c_value;
     }
-    
+
     this.arraySame = function(first, second) {
       first.sort();
       second.sort();

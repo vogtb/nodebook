@@ -28,21 +28,17 @@ define(['angular'], function(angular) {
         
        };
     })
-    //@TODO: Doesn't work properly. Only finds first instance of a keyword, not recurring instances
     .filter('highlight', function() {
       return function(node){
-        var toReturn = ' ' + node.text + ' ';
-        for (var i = 0; i < node.keywords.length; i++) {
-          if (toReturn.search(' '+ node.keywords[i]) > -1) {
-            var temp = '<span class="label">' + node.keywords[i] + '</span>';
-            node.keywords[i]
-            if (node.mainKeywords.indexOf(node.keywords[i]) > -1) {
-              var temp = '<span class="label label-info">' + node.keywords[i] + '</span>';
-            }
-            toReturn = toReturn.replace(node.keywords[i], temp);
-          }
+        function labelKeywords(line, word) {
+          var regex = new RegExp('(' + word + ')', 'gi');
+          return line.replace(regex, '<span class="label info">$1</span>');
         }
-        return toReturn;
+        var text =  node.text;
+        for (var i = 0; i < node.commonKeywords.length; i++) {
+          text = labelKeywords(text, node.commonKeywords[i]);
+        }
+        return text;
        };
     })
 });
