@@ -40,8 +40,14 @@ function(services) {
       };
       $http.put('/api/' + GlobalService.getCookie('uid') +'/nodes/' + nid, node)
         .success(function(data, status, headers, config) {
+          angular.forEach($rootScope.nodes, function(value, index) {
+            if (value._id == data._id) {
+              $rootScope.nodes[index] = data;
+            }
+          });
+          GlobalService.connectionEngine();
+          $rootScope.$broadcast('loaded');
           $rootScope.notify('Node edited in database', 4000);
-          callback(data);
         })
         .error(function(data, status, headers, config) {
           $rootScope.notify('Sorry, something went wrong', 4000);

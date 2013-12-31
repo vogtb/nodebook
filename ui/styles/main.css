@@ -55,7 +55,8 @@ h1, h2, h3, h4, h5 {
 
 .logo {
   margin-left: 14px;
-  width: 132px;
+  padding-right: 10px;
+  width: 104px;
   float: left;
   display: inline;
   margin-top: 6px;

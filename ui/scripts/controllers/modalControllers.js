@@ -186,16 +186,8 @@ function EditNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, GlobalSe
   };
   
   $scope.edit = function() {
-    NodeService.edit($scope.currentID, $scope.edit_text, function(data) {
-      angular.forEach($rootScope.nodes, function(value, index) {
-        if (value._id == data._id) {
-          $rootScope.nodes[index] = data;
-        }
-      });
-      $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
-      $rootScope.$broadcast('reloadSys');
-      $scope.close();
-    });
+    NodeService.edit($scope.currentID, $scope.edit_text);
+    $scope.close();
   };
   
   $scope.delete = function() {
