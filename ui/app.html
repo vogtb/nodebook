@@ -54,7 +54,6 @@
       <div class="span6 inspector">
         <div class="inner">
           <div class="node-view" id="{{node._id}}" ng-repeat="node in nodes" ng-class="{selected: node == focusedNode}" ng-click="focusFromText(node._id)">
-            <div class="_id">{{node._id}}</div>
             <div class="date">{{node.date | moment}}</div>
             <div class="content" ng-cloak>
               <span class="text" ng-cloak>{{node.text}}</span><a href="#" ng-controller="EditNodeModalCtrl" ng-click="openDialog(node)" class="edit">Edit Node</a>
