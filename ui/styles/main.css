@@ -6,7 +6,6 @@ UI styles
   display: none;
 }
 
-
 h1, h2, h3, h4, h5 {
   font-weight: 300;
 }
@@ -55,11 +54,20 @@ h1, h2, h3, h4, h5 {
 }
 
 .logo {
-	margin-left: 14px;
+  margin-left: 14px;
   width: 132px;
   float: left;
   display: inline;
   margin-top: 6px;
+}
+
+.search-node {
+  margin-right: 10px;
+}
+
+button.close {
+  margin-left: 8px;
+  margin-right: 8px;
 }
 
 .navigation input {
@@ -67,12 +75,12 @@ h1, h2, h3, h4, h5 {
   margin-top: 0px;
 }
 
-.current-graph {
+.current-query {
   position: relative;
   top: 2px;
 }
 
-.current-graph .title {
+.current-query .title {
   position: relative;
   top: 2px;
   font-size: 16px;

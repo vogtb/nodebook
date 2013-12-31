@@ -25,8 +25,11 @@
         <form class="navbar-search search-node">
           <input ng-model="query" type="text" class="search-query" placeholder="Search Nodebook" ng-enter="queryNodes()">
         </form>
-        <span class="current-graph" ng-show="queryResult.show">
-          <span ng-cloak class="title"><strong>Query: &nbsp;</strong>{{queryResult.query}}</span>
+        <span class="current-query" ng-show="queryResult.show">
+          <button type="button" class="close pull-left" ng-click="clearQuery()">&times;</button>
+          <span ng-cloak class="title">
+            <strong>Query: &nbsp;</strong>{{queryResult.query}}
+          </span>
           <span ng-cloak class="badge slate">{{nodes.length}}</span>
         </span>
         <ul class="nav nav-pills account pull-right" ng-cloak>
@@ -68,6 +71,5 @@
   <div id="forceTrigger" ng-controller="DiffModalCtrl" ng-click="openDialog()"></div>
   <div ng-view></div>
   <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
-  -->
 </body>
 </html>

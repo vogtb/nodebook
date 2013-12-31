@@ -80,29 +80,18 @@ function(services) {
     }
     
     //Queries for nodes
-    this.query = function(text, callback){
+    this.query = function(text){
       $rootScope.query = text;
-      var dataToSend = {
-        query: text
-      };
-      $http.post('/api/' + GlobalService.getCookie('uid') +'/query', dataToSend)
+      $http.post('/api/' + GlobalService.getCookie('uid') +'/query', {query: text})
         .success(function(data, status, headers, config) {
-          var collection = {
-            nodes: data,
-            connections: GlobalService.connectionEngine(data)
-          };
-          if (collection.nodes.length > 0) {
-            $rootScope.currentGraph = null;
-            $rootScope.connections = collection.connections;
-            $rootScope.nodes = collection.nodes;
+          if (data.length > 0) {
+            $rootScope.nodes = data;
             $rootScope.maxWeight = 0;
             $rootScope.focusedNode = null;
             $rootScope.queryResult = {
               show: true,
               query: $rootScope.query
             };
-            $rootScope.$broadcast('loaded');
-            $rootScope.$broadcast('refreshCanvas');
           } else {
             $rootScope.notify('No Data Available', 4000);
           }

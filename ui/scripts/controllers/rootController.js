@@ -53,6 +53,13 @@ define(['controllers/controllers', 'services/nodeService'],
         $rootScope.queryNodes = function() {
           NodeService.query($scope.query);
         }
+        
+        $rootScope.clearQuery = function() {
+          $rootScope.queryResult = null;
+          $rootScope.query = null;
+          $scope.query = null;
+          NodeService.getAll();
+        }
 
         /*INITIAL LOADING.*/
         NodeService.getAll();
