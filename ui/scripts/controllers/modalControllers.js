@@ -17,7 +17,7 @@ function AddNodeModalCtrl($scope, $dialog){
   };
 }
 
-function AddNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, NodeService, FilterService, GlobalService) {
+function AddNodeModalInstanceCtrl($scope, $dialog, dialog, $rootScope, NodeService, GlobalService) {
   $scope.close = function(){
     dialog.close();
   };

@@ -3,8 +3,8 @@ define(['controllers/controllers', 'services/nodeService'],
 
 
     //Root Control
-    controllers.controller('RootControl', ['$scope', '$rootScope', 'NodeService', 'FilterService', 'GlobalService',
-      function($scope, $rootScope, NodeService, FilterService, GlobalService) {
+    controllers.controller('RootControl', ['$scope', '$rootScope', 'NodeService', 'GlobalService',
+      function($scope, $rootScope, NodeService, GlobalService) {
         $rootScope.currentlyEditing = null;
         $rootScope.focusedNode = null;
         $rootScope.secondFocusedNode = null;

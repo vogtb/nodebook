@@ -23,7 +23,7 @@ stopwords = SortedList.create({ unique: true }, require('./lists/stopwords.json'
 /*
 MONGOOSE OBJECT DECLARATION
 */
-var u, n, f;//user object, node object, and filter object
+var u, n, f;//user object, node object
 
 
 // Passport session setup.
@@ -92,14 +92,6 @@ var nodeSchema = new Schema({
   keywords: [String],
   date: String
 });
-var filterSchema = new Schema({
-  UID: { type: String, index: true },
-  name: String,
-  nodes: [String],
-  keywords: [String],
-  date: Date
-});
-Filter = mongoose.model('Filter', filterSchema);
 Node = mongoose.model('Node', nodeSchema);
 User = mongoose.model('User', userSchema);
 
