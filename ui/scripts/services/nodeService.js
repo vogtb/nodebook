@@ -21,8 +21,7 @@ function(services) {
           if ($rootScope.nodes.length > 2) {
             $rootScope.focusedNode = $rootScope.nodes[0];
           } else {
-            //@TODO: Eliminate this. We need it now because of an error in the refreshing of the canvas.
-            window.location = "/nb";
+            location.reload();
           }
           $rootScope.connections = GlobalService.connectionEngine($rootScope.nodes);
           $rootScope.$broadcast('reloadSys');

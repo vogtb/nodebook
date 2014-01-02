@@ -41,7 +41,7 @@ function(services) {
           $rootScope.user = data;
         })
         .error(function(data, status, headers, config) {
-          //@TODO: throw up an error.
+          $rootScope.notify('Sorry, something went wrong', 4000);
         });
     }
     
@@ -72,10 +72,10 @@ function(services) {
       };
       $http.post('/api/feedback', send)
         .success(function(data, status, headers, config) {
-          //@TODO: Throw up notification.
+          $rootScope.notify('Thannks for your feedback', 3000);
         })
         .error(function(data, status, headers, config) {
-          //Fail...silently?
+          $rootScope.notify('Sorry, something went wrong', 4000);
         });
     }
     
@@ -86,16 +86,6 @@ function(services) {
         })
         .error(function(data, status, headers, config) {
           window.location = "/goodbye";
-        });
-    }
-    
-    this.jackLondon = function(callback) {
-      $http.get('/demo/jacklondon')
-        .success(function(data, status, headers, config) {
-          callback(data);
-        })
-        .error(function(data, status, headers, config) {
-          //@TODO: Throw up a notification.
         });
     }
 

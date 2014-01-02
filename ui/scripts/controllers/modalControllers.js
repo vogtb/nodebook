@@ -150,7 +150,6 @@ function FeedbackInstanceCtrl($scope, $dialog, dialog, $rootScope, GlobalService
   $scope.send = function() {
     GlobalService.sendFeedback($scope.feedback);
     $scope.close();
-    //@TODO: Throw up a notification thanking the user.
   };
 }
 
