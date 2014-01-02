@@ -35,7 +35,6 @@ require([
   'domReady',
   'services/globalService',
   'services/nodeService',
-  'services/filterService',
   'controllers/modalControllers',
   'controllers/rootController',
   'directives/ngDirectives',
