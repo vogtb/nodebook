@@ -11,7 +11,7 @@ Make sure you have mongo running, and then start the server.
 `mongod&`
 `node app.js`
 
-The .env file indicates that the server will run at [localhost:3000/](localhost:3000/).
+The .env file indicates that the server will run at [http://localhost:3000/](http://localhost:3000/).
 
 ## Usage
 
