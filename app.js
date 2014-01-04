@@ -9,8 +9,6 @@ env = (function(){
   Habitat.load();
   return new Habitat();
 } ()),
-Email = require('email').Email,
-util = require('util'),
 fs = require('fs'),
 mongoose = require('mongoose'),
 moment = require('moment'),
@@ -272,22 +270,6 @@ app.post('/api/:user/query', ensureAuthenticated, function(req, res) {
     res.end();
   }
 });
-
-//POST feedback
-app.post('/api/feedback', ensureAuthenticated, function(req, res) {
-  var user = req.params.user;
-  var mail = new Email(
-  {
-    from: "feedback@nodebookfeedback.com",
-    to: "benjvogt@gmail.com",
-    subject: "Nodebook Feedback",
-    body: req.body.feedback.toString()
-  });
-  mail.send();
-  res.status(200);
-  res.end();
-});
-
 
 //PUT requests------------------------------------------------------------
 

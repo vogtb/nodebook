@@ -1,0 +1,16 @@
+{
+  "name": "nodebook",
+  "description": "Web app to collect your thoughts, and organize your ideas in a visually intuitive way.",
+  "author": "Ben Vogt <benjvogt@gmail.com>",
+  "dependencies": {
+    "express": "3.3.4",
+    "passport": "0.1.17",
+    "habitat": "0.4.2",
+    "fs": "0.1.7",
+    "mongoose": "3.6.20",
+    "moment": "2.1.0",
+    "sortedlist": "0.3.1",
+    "natural": "0.1.21"
+  },
+  "engine": "node >= 0.10.18"
+}

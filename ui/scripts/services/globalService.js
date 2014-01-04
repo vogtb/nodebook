@@ -66,19 +66,6 @@ function(services) {
       }
     }
     
-    this.sendFeedback = function(feedback) {
-      var send = {
-        feedback: feedback
-      };
-      $http.post('/api/feedback', send)
-        .success(function(data, status, headers, config) {
-          $rootScope.notify('Thannks for your feedback', 3000);
-        })
-        .error(function(data, status, headers, config) {
-          $rootScope.notify('Sorry, something went wrong', 4000);
-        });
-    }
-    
     this.deleteAccount = function() {
       $http.delete('/api/' + this.getCookie('uid'))
         .success(function(data, status, headers, config) {

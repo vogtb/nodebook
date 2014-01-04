@@ -123,37 +123,6 @@ function DeleteUserModalInstanceCtrl($scope, $dialog, dialog, $rootScope, Global
 }
 
 
-
-function FeedbackCtrl($scope, $dialog, $rootScope){
-  $scope.opts = {
-    backdrop: true,
-    keyboard: true,
-    backdropClick: true,
-    template:  'views/feedback.html',
-    controller: 'UserModalCtrl'
-  };
-
-  $scope.openDialog = function(node){
-    $rootScope.currentlyEditing = node;
-    var d = $dialog.dialog({dialogFade: false});
-    d.open('views/feedback.html', 'FeedbackInstanceCtrl');
-  };
-}
-
-function FeedbackInstanceCtrl($scope, $dialog, dialog, $rootScope, GlobalService) {
-  $scope.feedback;
-  
-  $scope.close = function(){
-    dialog.close();
-  };
-  
-  $scope.send = function() {
-    GlobalService.sendFeedback($scope.feedback);
-    $scope.close();
-  };
-}
-
-
 function EditNodeModalCtrl($scope, $dialog, $rootScope, NodeService){
   $scope.opts = {
     backdrop: true,
